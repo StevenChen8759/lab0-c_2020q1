@@ -34,7 +34,20 @@ void q_free(queue_t *q)
     /* TODO: How about freeing the list elements and the strings? */
     /* Free queue structure */
 
+    list_ele_t *ptr;  // Declare operating pointer
 
+    if (q != NULL) {
+        ptr = q->head;
+    } else
+        return;
+
+    /* Free nodes and string space*/
+    while (ptr != NULL) {
+        free(ptr->value);
+        ptr = ptr->next;
+        free(q->head);
+        q->head = ptr;
+    }
 
     free(q);
 }
@@ -48,8 +61,8 @@ void q_free(queue_t *q)
  */
 bool q_insert_head(queue_t *q, char *s)
 {
+    /*  Local variable declaration */
     list_ele_t *newh;
-    bool result;
 
     /* Return false while q is NULL */
     if (q == NULL)
@@ -58,29 +71,31 @@ bool q_insert_head(queue_t *q, char *s)
     /* Allocate the memory space iff q != null */
     newh = malloc(sizeof(list_ele_t));
 
-    /* Malloc returns not NULL... */
+    /* Malloc returns cases handling... */
     if (newh != NULL) {
-        result = true;  // Return true later...
-
         /* Allocate the space of string and copy it to that space,
-           including end-of-string '\0' set */
+           including end-of-string '\0' set and null allocation check */
         newh->value = (char *) malloc(sizeof(char) * (strlen(s) + 1));
-        memset(newh->value, '\0', sizeof(char) * (strlen(s) + 1));
-        strncpy(newh->value, s, strlen(s));
 
+        /* Return false while string space allocation failed... */
+        if (newh->value != NULL) {
+            memset(newh->value, '\0', sizeof(char) * (strlen(s) + 1));
+            strncpy(newh->value, s, strlen(s));
+        } else {
+            free(newh);  // Don't forget to free allocated space while failed
+                         // allocation
+            return false;
+        }
         /* Do pointer and parameter edition */
         newh->next = q->head;
         q->head = newh;
         q->size++;
 
     } else {
-        result = false;  // Return false later...
+        return false;  // Failed to allocated newh, return false
     }
 
-    /* No matter allocation result, free input string space before return... */
-    // free(s);
-
-    return result;
+    return true;  // All correct, return true
 }
 
 /*
