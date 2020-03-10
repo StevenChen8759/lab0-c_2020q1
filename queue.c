@@ -49,25 +49,38 @@ void q_free(queue_t *q)
 bool q_insert_head(queue_t *q, char *s)
 {
     list_ele_t *newh;
-    /* TODO: What should you do if the q is NULL? */
-    newh = malloc(sizeof(list_ele_t));
-    /* Don't forget to allocate space for the string and copy it */
-    /* What if either call to malloc returns NULL? */
+    bool result;
 
-    /* Return false while malloc returns NULL... */
-    if (newh == NULL)
+    /* Return false while q is NULL */
+    if (q == NULL)
         return false;
 
-    /* Allocate the space of string and copy it to that space */
-    newh->value = (char *) malloc(sizeof(char) * strlen(s));
-    memset(newh->value, '\0', strlen(s));
-    strncpy(newh->value, s, strlen(s));
+    /* Allocate the memory space iff q != null */
+    newh = malloc(sizeof(list_ele_t));
 
-    /* Do pointer and parameter edition */
-    newh->next = q->head;
-    q->head = newh;
-    q->size++;
-    return true;
+    /* Malloc returns not NULL... */
+    if (newh != NULL) {
+        result = true;  // Return true later...
+
+        /* Allocate the space of string and copy it to that space,
+           including end-of-string '\0' set */
+        newh->value = (char *) malloc(sizeof(char) * (strlen(s) + 1));
+        memset(newh->value, '\0', sizeof(char) * (strlen(s) + 1));
+        strncpy(newh->value, s, strlen(s));
+
+        /* Do pointer and parameter edition */
+        newh->next = q->head;
+        q->head = newh;
+        q->size++;
+
+    } else {
+        result = false;  // Return false later...
+    }
+
+    /* No matter allocation result, free input string space before return... */
+    // free(s);
+
+    return result;
 }
 
 /*
