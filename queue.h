@@ -32,6 +32,7 @@ typedef struct {
 
     list_ele_t *tail; /* Pointer for the tail of the queue */
 
+    int size; /* Record the size of the queue */
 
 } queue_t;
 
