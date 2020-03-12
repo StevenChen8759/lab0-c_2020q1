@@ -31,11 +31,11 @@ queue_t *q_new()
 /* Free all storage used by queue */
 void q_free(queue_t *q)
 {
-    /* TODO: How about freeing the list elements and the strings? */
     /* Free queue structure */
 
     list_ele_t *ptr;  // Declare operating pointer
 
+    /* check if q is NULL or not */
     if (q != NULL) {
         ptr = q->head;
     } else
@@ -49,7 +49,7 @@ void q_free(queue_t *q)
         q->head = ptr;
     }
 
-    free(q);
+    free(q); /* Free queue structure space */
 }
 
 /*
@@ -86,9 +86,12 @@ bool q_insert_head(queue_t *q, char *s)
                          // allocation
             return false;
         }
-        /* Do pointer and parameter edition */
+
+        /* Do pointer and parameter edition (queue insert head) */
         newh->next = q->head;
         q->head = newh;
+        if (q->tail == NULL)
+            q->tail = newh;  // Initialize case
         q->size++;
 
     } else {
@@ -110,7 +113,50 @@ bool q_insert_tail(queue_t *q, char *s)
     /* TODO: You need to write the complete code for this function */
     /* Remember: It should operate in O(1) time */
     /* TODO: Remove the above comment when you are about to implement. */
-    return false;
+
+    /*  Local variable declaration */
+    list_ele_t *newl;
+
+    /* Return false while q is NULL */
+    if (q == NULL)
+        return false;
+
+    /* Allocate the memory space iff q != null */
+    newl = malloc(sizeof(list_ele_t));
+
+    /* Malloc returns cases handling... */
+    if (newl != NULL) {
+        /* Allocate the space of string and copy it to that space,
+           including end-of-string '\0' set and null allocation check */
+        newl->value = (char *) malloc(sizeof(char) * (strlen(s) + 1));
+
+        /* Return false while string space allocation failed... */
+        if (newl->value != NULL) {
+            memset(newl->value, '\0', sizeof(char) * (strlen(s) + 1));
+            strncpy(newl->value, s, strlen(s));
+        } else {
+            free(newl);  // Don't forget to free allocated space while failed
+                         // allocation
+            return false;
+        }
+
+        /* Do pointer and parameter edition (insert tail in queue)*/
+        if (q->tail == NULL) {  // Initialize case
+            q->head = newl;
+        } else {
+            q->tail->next = newl;
+        }
+        q->tail = newl;
+        /* Assign newl->next to NULL to avoid illegal memory access.
+           (Because malloc() initalize value may not be zero!) */
+        newl->next = NULL;
+        q->size++;
+
+    } else {
+        return false;  // Failed to allocated newl, return false
+    }
+
+    return true;  // All correct, return true
 }
 
 /*
