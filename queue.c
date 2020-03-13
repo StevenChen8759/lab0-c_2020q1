@@ -118,7 +118,7 @@ bool q_insert_tail(queue_t *q, char *s)
         return false;
 
     /* Allocate the memory space iff q != null */
-    newt = malloc(sizeof(list_ele_t));
+    newt = (list_ele_t *) malloc(sizeof(list_ele_t));
 
     /* Malloc returns cases handling... */
     if (newt != NULL) {
@@ -167,7 +167,30 @@ bool q_remove_head(queue_t *q, char *sp, size_t bufsize)
 {
     /* TODO: You need to fix up this code. */
     /* TODO: Remove the above comment when you are about to implement. */
+
+    /* Declare operating pointer on nodes */
+    list_ele_t *ptr;
+
+    /* Reject q is NULL and q->head is NULL cases */
+    if (q == NULL || q->head == NULL)
+        return false;
+
+    /* Operating Pointer Assignment */
+    ptr = q->head;
+
+    /* Copy string to *sp */
+    if (sp != NULL) {
+        strncpy(sp, ptr->value, bufsize);
+    }
+
+    /* Edit pointer and free node space */
     q->head = q->head->next;
+    free(ptr->value);
+    free(ptr);
+    q->size--;
+    if (q->size == 0) {
+        q->tail = NULL;
+    }
     return true;
 }
 
@@ -177,10 +200,10 @@ bool q_remove_head(queue_t *q, char *sp, size_t bufsize)
  */
 int q_size(queue_t *q)
 {
-    /* TODO: You need to write the code for this function */
-    /* Remember: It should operate in O(1) time */
-    /* TODO: Remove the above comment when you are about to implement. */
-    return 0;
+    if (q != NULL)
+        return q->size;
+    else
+        return 0;
 }
 
 /*
