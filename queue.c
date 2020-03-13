@@ -13,17 +13,12 @@ queue_t *q_new()
 {
     queue_t *q = malloc(sizeof(queue_t));
 
-    /* TODO: May need to do something to solve NULL malloc return! */
-
-    if (q == NULL) {
-        printf("STCH HINT!!! -> q_new() malloc function return null!!!!! \n");
-    } else {
+    if (q != NULL) {
         /* Points to NULL initially */
         q->head = NULL;
         q->tail = NULL;
         q->size = 0; /* set size 0 initially */
     }
-
 
     return q;
 }
@@ -31,8 +26,6 @@ queue_t *q_new()
 /* Free all storage used by queue */
 void q_free(queue_t *q)
 {
-    /* Free queue structure */
-
     list_ele_t *ptr;  // Declare operating pointer
 
     /* check if q is NULL or not */
@@ -41,7 +34,7 @@ void q_free(queue_t *q)
     } else
         return;
 
-    /* Free nodes and string space*/
+    /* Free list nodes and its string space*/
     while (ptr != NULL) {
         free(ptr->value);
         ptr = ptr->next;
@@ -68,21 +61,28 @@ bool q_insert_head(queue_t *q, char *s)
     if (q == NULL)
         return false;
 
-    /* Allocate the memory space iff q != null */
-    newh = malloc(sizeof(list_ele_t));
+    /* Allocate the memory space */
+    newh = (list_ele_t *) malloc(sizeof(list_ele_t));
 
-    /* Malloc returns cases handling... */
+    /* Malloc return cases handling (allocate newh) */
     if (newh != NULL) {
+        /* Allocate success case */
+
         /* Allocate the space of string and copy it to that space,
            including end-of-string '\0' set and null allocation check */
         newh->value = (char *) malloc(sizeof(char) * (strlen(s) + 1));
 
-        /* Return false while string space allocation failed... */
+        /* Malloc return cases handling (allocate newh->value) */
         if (newh->value != NULL) {
+            /* Allocate success case(newh->value) */
+
             memset(newh->value, '\0', sizeof(char) * (strlen(s) + 1));
             strncpy(newh->value, s, strlen(s));
         } else {
-            free(newh);  // Don't forget to free allocated space while failed
+            /* Allocate fail case(newh->value) */
+
+            free(newh);  // Don't forget to free allocated space(newh) while
+                         // failed
                          // allocation
             return false;
         }
@@ -95,10 +95,10 @@ bool q_insert_head(queue_t *q, char *s)
         q->size++;
 
     } else {
-        return false;  // Failed to allocated newh, return false
+        return false;  // Allocate fail case(newh), return false
     }
 
-    return true;  // All correct, return true
+    return true;  // All allocation correct, return true
 }
 
 /*
@@ -110,46 +110,42 @@ bool q_insert_head(queue_t *q, char *s)
  */
 bool q_insert_tail(queue_t *q, char *s)
 {
-    /* TODO: You need to write the complete code for this function */
-    /* Remember: It should operate in O(1) time */
-    /* TODO: Remove the above comment when you are about to implement. */
-
     /*  Local variable declaration */
-    list_ele_t *newl;
+    list_ele_t *newt;
 
     /* Return false while q is NULL */
     if (q == NULL)
         return false;
 
     /* Allocate the memory space iff q != null */
-    newl = malloc(sizeof(list_ele_t));
+    newt = malloc(sizeof(list_ele_t));
 
     /* Malloc returns cases handling... */
-    if (newl != NULL) {
+    if (newt != NULL) {
         /* Allocate the space of string and copy it to that space,
            including end-of-string '\0' set and null allocation check */
-        newl->value = (char *) malloc(sizeof(char) * (strlen(s) + 1));
+        newt->value = (char *) malloc(sizeof(char) * (strlen(s) + 1));
 
         /* Return false while string space allocation failed... */
-        if (newl->value != NULL) {
-            memset(newl->value, '\0', sizeof(char) * (strlen(s) + 1));
-            strncpy(newl->value, s, strlen(s));
+        if (newt->value != NULL) {
+            memset(newt->value, '\0', sizeof(char) * (strlen(s) + 1));
+            strncpy(newt->value, s, strlen(s));
         } else {
-            free(newl);  // Don't forget to free allocated space while failed
+            free(newt);  // Don't forget to free allocated space while failed
                          // allocation
             return false;
         }
 
         /* Do pointer and parameter edition (insert tail in queue)*/
         if (q->tail == NULL) {  // Initialize case
-            q->head = newl;
+            q->head = newt;
         } else {
-            q->tail->next = newl;
+            q->tail->next = newt;  // Move tail pointer
         }
-        q->tail = newl;
+        q->tail = newt;
         /* Assign newl->next to NULL to avoid illegal memory access.
-           (Because malloc() initalize value may not be zero!) */
-        newl->next = NULL;
+           (Because malloc() inital value may not be zero!) */
+        newt->next = NULL;
         q->size++;
 
     } else {
