@@ -81,9 +81,9 @@ bool q_insert_head(queue_t *q, char *s)
         return false;
     }
 
-    /* Copy the string and set end-of-string */
+    /* Copy the string */
     strncpy(newh->value, s, len_s);
-    *(newh->value + len_s - 1) = '\0';
+    *(newh->value + len_s) = '\0';  // Set end-of-string
 
     /* Do pointer and parameter edition (queue insert head) */
     newh->next = q->head;
@@ -131,9 +131,9 @@ bool q_insert_tail(queue_t *q, char *s)
         return false;
     }
 
-    /* Copy string and set end-of-string */
-    strncpy(newt->value, s, strlen(s));
-    *(newt->value + len_s - 1) = '\0';
+    /* Copy string */
+    strncpy(newt->value, s, len_s);
+    *(newt->value + len_s) = '\0';  // Edit end-of-string
 
     /* Do pointer and parameter edition (insert tail in queue)*/
     if (q->tail == NULL) {  // Initialize case
@@ -162,6 +162,7 @@ bool q_remove_head(queue_t *q, char *sp, size_t bufsize)
 {
     /* Declare operating pointer on nodes */
     list_ele_t *ptr;
+    // size_t len_qs;
 
     /* Reject q is NULL and q->head is NULL cases */
     if (q == NULL || q->head == NULL)
@@ -172,7 +173,7 @@ bool q_remove_head(queue_t *q, char *sp, size_t bufsize)
 
     /* Copy string to *sp */
     if (sp != NULL) {
-        strncpy(sp, ptr->value, (bufsize - 1));
+        strncpy(sp, ptr->value, bufsize);
         *(sp + bufsize - 1) = '\0';  // Edit end-of-string
     }
 
