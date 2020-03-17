@@ -167,7 +167,8 @@ bool q_remove_head(queue_t *q, char *sp, size_t bufsize)
 
     /* Copy string to *sp */
     if (sp != NULL) {
-        strncpy(sp, ptr->value, bufsize);
+        strncpy(sp, ptr->value, (bufsize - 1));
+        *(sp + bufsize - 1) = '\0';  // Edit end-of-string
     }
 
     /* Edit pointer and free node space */
