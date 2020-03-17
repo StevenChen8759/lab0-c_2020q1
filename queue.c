@@ -64,39 +64,29 @@ bool q_insert_head(queue_t *q, char *s)
     /* Allocate the memory space */
     newh = (list_ele_t *) malloc(sizeof(list_ele_t));
 
-    /* Malloc return cases handling (allocate newh) */
-    if (newh != NULL) {
-        /* Allocate success case */
+    /* Failed to allocate node space, retrun false*/
+    if (newh == NULL)
+        return false;
 
-        /* Allocate the space of string and copy it to that space,
-           including end-of-string '\0' set and null allocation check */
-        newh->value = (char *) malloc(sizeof(char) * (strlen(s) + 1));
+    /* Allocate the space of string, include end-of-string '\0' */
+    newh->value = (char *) malloc(sizeof(char) * (strlen(s) + 1));
 
-        /* Malloc return cases handling (allocate newh->value) */
-        if (newh->value != NULL) {
-            /* Allocate success case(newh->value) */
-
-            memset(newh->value, '\0', sizeof(char) * (strlen(s) + 1));
-            strncpy(newh->value, s, strlen(s));
-        } else {
-            /* Allocate fail case(newh->value) */
-
-            free(newh);  // Don't forget to free allocated space(newh) while
-                         // failed
-                         // allocation
-            return false;
-        }
-
-        /* Do pointer and parameter edition (queue insert head) */
-        newh->next = q->head;
-        q->head = newh;
-        if (q->tail == NULL)
-            q->tail = newh;  // Initialize case
-        q->size++;
-
-    } else {
-        return false;  // Allocate fail case(newh), return false
+    /* Failed to allocate string space, free allocated node and return false */
+    if (newh->value == NULL) {
+        free(newh);
+        return false;
     }
+
+    /* Set memory's value and copy the string */
+    memset(newh->value, '\0', sizeof(char) * (strlen(s) + 1));
+    strncpy(newh->value, s, strlen(s));
+
+    /* Do pointer and parameter edition (queue insert head) */
+    newh->next = q->head;
+    q->head = newh;
+    if (q->tail == NULL)
+        q->tail = newh;  // Initialize case
+    q->size++;
 
     return true;  // All allocation correct, return true
 }
