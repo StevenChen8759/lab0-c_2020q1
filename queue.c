@@ -312,8 +312,8 @@ void q_sort(queue_t *q)
     if (q == NULL)
         return;
 
-    /* Return directly while queue has only 1 element */
-    if (q->size == 1)
+    /* Return directly while queue has only 1 element or less than 1 */
+    if (q->size <= 1)
         return;
 
     /* Call Sorting function */
