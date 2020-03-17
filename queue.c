@@ -56,6 +56,7 @@ bool q_insert_head(queue_t *q, char *s)
 {
     /*  Local variable declaration */
     list_ele_t *newh;
+    size_t len_s;
 
     /* Return false while q is NULL */
     if (q == NULL)
@@ -68,8 +69,11 @@ bool q_insert_head(queue_t *q, char *s)
     if (newh == NULL)
         return false;
 
+    /* Assign length of string s */
+    len_s = strlen(s);
+
     /* Allocate the space of string, include end-of-string '\0' */
-    newh->value = (char *) malloc(sizeof(char) * (strlen(s) + 1));
+    newh->value = (char *) malloc(sizeof(char) * (len_s + 1));
 
     /* Failed to allocate string space, free allocated node and return false */
     if (newh->value == NULL) {
@@ -77,9 +81,9 @@ bool q_insert_head(queue_t *q, char *s)
         return false;
     }
 
-    /* Set memory's value and copy the string */
-    memset(newh->value, '\0', sizeof(char) * (strlen(s) + 1));
-    strncpy(newh->value, s, strlen(s));
+    /* Copy the string and set end-of-string */
+    strncpy(newh->value, s, len_s);
+    *(newh->value + len_s - 1) = '\0';
 
     /* Do pointer and parameter edition (queue insert head) */
     newh->next = q->head;
@@ -102,6 +106,7 @@ bool q_insert_tail(queue_t *q, char *s)
 {
     /*  Local variable declaration */
     list_ele_t *newt;
+    size_t len_s;
 
     /* Return false while q is NULL */
     if (q == NULL)
@@ -110,37 +115,37 @@ bool q_insert_tail(queue_t *q, char *s)
     /* Allocate the memory space iff q != null */
     newt = (list_ele_t *) malloc(sizeof(list_ele_t));
 
-    /* Malloc returns cases handling... */
-    if (newt != NULL) {
-        /* Allocate the space of string and copy it to that space,
-           including end-of-string '\0' set and null allocation check */
-        newt->value = (char *) malloc(sizeof(char) * (strlen(s) + 1));
+    /* Allocate the memory space failed, return false*/
+    if (newt == NULL)
+        return false;
 
-        /* Return false while string space allocation failed... */
-        if (newt->value != NULL) {
-            memset(newt->value, '\0', sizeof(char) * (strlen(s) + 1));
-            strncpy(newt->value, s, strlen(s));
-        } else {
-            free(newt);  // Don't forget to free allocated space while failed
-                         // allocation
-            return false;
-        }
+    /* Assign length of string*/
+    len_s = strlen(s);
 
-        /* Do pointer and parameter edition (insert tail in queue)*/
-        if (q->tail == NULL) {  // Initialize case
-            q->head = newt;
-        } else {
-            q->tail->next = newt;  // Move tail pointer
-        }
-        q->tail = newt;
-        /* Assign newl->next to NULL to avoid illegal memory access.
-           (Because malloc() inital value may not be zero!) */
-        newt->next = NULL;
-        q->size++;
+    /* Allocate the space of string */
+    newt->value = (char *) malloc(sizeof(char) * (len_s + 1));
 
-    } else {
-        return false;  // Failed to allocated newl, return false
+    /* Allocate the space of string failed, free node space and return false */
+    if (newt->value == NULL) {
+        free(newt);
+        return false;
     }
+
+    /* Copy string and set end-of-string */
+    strncpy(newt->value, s, strlen(s));
+    *(newt->value + len_s - 1) = '\0';
+
+    /* Do pointer and parameter edition (insert tail in queue)*/
+    if (q->tail == NULL) {  // Initialize case
+        q->head = newt;
+    } else {
+        q->tail->next = newt;  // Move tail pointer
+    }
+    q->tail = newt;
+    /* Assign newl->next to NULL to avoid illegal memory access.
+       (Because malloc() inital value may not be zero!) */
+    newt->next = NULL;
+    q->size++;
 
     return true;  // All correct, return true
 }
